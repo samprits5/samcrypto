@@ -24,6 +24,9 @@ def help():
 
 
 def collect_files(source, file_type=''):
+	"""
+	Collects all the file to Encrypt/Decrypt
+	"""
 	try:
 		if not os.path.isdir(source):
 			return False, "Message : Invalid path provided"
