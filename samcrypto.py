@@ -8,7 +8,7 @@ import sys
 from cryptography.fernet import Fernet
 from multiprocessing.dummy import Pool as ThreadPool
 
-DEFAULT_SECRET_KEY_PATH  = r'your_secret_key_path\samcrypto.key'
+DEFAULT_SECRET_KEY_PATH  = r'C:\Users\USER\Documents\AES_Encryption_Key\samcrypto.key'
 THREAD_BATCH_SIZE        = 10
 
 def help():
@@ -80,7 +80,7 @@ def read_key(keypath=''):
 	except Exception as e:
 		return False, str(e)
 
-def encrypt_file(key=None, file=''):
+def encrypt_file(key=None, file='', delete_src=False):
 	"""
 	Encrypts a file with Secret Key
 	"""
@@ -109,13 +109,17 @@ def encrypt_file(key=None, file=''):
 		with open(output_filepath, 'wb') as encrypted_file: 
 			encrypted_file.write(encrypted)
 
+		# Deleting the Source File
+		if delete_src:
+			os.remove(file)
+
 		return True, "Message : {} encrypted successfully!".format(tail)
 
 	except Exception as e:
 		return False, str(e)
 
 
-def decrypt_file(key=None, file=''):
+def decrypt_file(key=None, file='', delete_src=False):
 	"""
 	Decrypts a file with Secret Key
 	"""
@@ -138,7 +142,7 @@ def decrypt_file(key=None, file=''):
 		head, tail = os.path.split(file)
 
 		if ".samcrypto" in tail:
-			tail = tail.replace(".samcrypto", "")
+			tail = tail.replace(".samcrypto", "", 1)
 
 		output_filepath = os.path.join(head, tail)
 
@@ -146,6 +150,10 @@ def decrypt_file(key=None, file=''):
 		# writing the decrypted data 
 		with open(output_filepath, 'wb') as dec_file: 
 			dec_file.write(decrypted_data) 
+
+		# Deleting the Source File
+		if delete_src:
+			os.remove(file)
 
 		return True, "Message : {} decrypted successfully!".format(tail)
 
@@ -190,6 +198,11 @@ def main():
 			except Exception as e:
 				key=None
 
+		# If source needs to be deleted
+		delete_src = False
+		if '-del' in args:
+			delete_src = True
+
 		# Finding Encryption Values
 		index = args.index('-e')
 		try:
@@ -200,7 +213,7 @@ def main():
 		# Encryption Starts
 		key, msg = read_key(key)
 
-		key, msg = encrypt_file(key=key, file=file)
+		key, msg = encrypt_file(key=key, file=file, delete_src=delete_src)
 
 		print("\n" + msg)
 
@@ -219,6 +232,11 @@ def main():
 			except Exception as e:
 				key=None
 
+		# If source needs to be deleted
+		delete_src = False
+		if '-del' in args:
+			delete_src = True
+
 		# Finding Decryption Values
 		index = args.index('-d')
 		try:
@@ -229,7 +247,7 @@ def main():
 		# Decryption Starts
 		key, msg = read_key(key)
 
-		key, msg = decrypt_file(key=key, file=file)
+		key, msg = decrypt_file(key=key, file=file, delete_src=delete_src)
 
 		print("\n" + msg)
 
@@ -247,6 +265,11 @@ def main():
 					key = DEFAULT_SECRET_KEY_PATH
 			except Exception as e:
 				key=None
+
+		# If source needs to be deleted
+		delete_src = False
+		if '-del' in args:
+			delete_src = True
 
 		# Finding Encryption Values
 		index = args.index('-E')
@@ -266,7 +289,7 @@ def main():
 
 		pool = ThreadPool(THREAD_BATCH_SIZE)
 
-		results = pool.starmap(encrypt_file, zip([key for _ in range(len(files))], files))
+		results = pool.starmap(encrypt_file, zip([key for _ in range(len(files))], files, [delete_src for _ in range(len(files))]))
 
 		pool.close()
 		pool.join()
@@ -291,6 +314,11 @@ def main():
 			except Exception as e:
 				key=None
 
+		# If source needs to be deleted
+		delete_src = False
+		if '-del' in args:
+			delete_src = True
+
 		# Finding Decryption Values
 		index = args.index('-D')
 		try:
@@ -309,7 +337,7 @@ def main():
 
 		pool = ThreadPool(THREAD_BATCH_SIZE)
 
-		results = pool.starmap(decrypt_file, zip([key for _ in range(len(files))], files))
+		results = pool.starmap(decrypt_file, zip([key for _ in range(len(files))], files, [delete_src for _ in range(len(files))]))
 
 		pool.close()
 		pool.join()
