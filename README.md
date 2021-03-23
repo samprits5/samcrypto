@@ -5,16 +5,16 @@ A simple python encryption/decryption tool created using [Cryptography](https://
 
 **Usage :** samcrypto -[OPTION] *[VALUE]<br><br>
 
-**Examples :**<br>
+**Examples :**
 **Key Generate** : 
-```bash
+```
 python samcrypto.py -g C:\\Users\\USER\\Desktop
-```<br>
+```
 **Encryption**   : 
-```bash
+```
 python samcrypto.py -k samcrypto.key -e file.txt
-```<br>
+```
 **Decryption**   : 
-```bash
+```
 python samcrypto.py -k samcrypto.key -d file.txt.samcrypto
-```<br>
+```
