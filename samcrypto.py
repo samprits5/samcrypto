@@ -8,7 +8,7 @@ import sys
 from cryptography.fernet import Fernet
 from multiprocessing.dummy import Pool as ThreadPool
 
-DEFAULT_SECRET_KEY_PATH  = r'C:\Users\USER\Documents\AES_Encryption_Key\samcrypto.key'
+DEFAULT_SECRET_KEY_PATH  = r'your_secret_key_path\samcrypto.key'
 THREAD_BATCH_SIZE        = 10
 
 def help():
